@@ -1,5 +1,6 @@
 import * as THREE from "https://esm.sh/three@0.166.1";
 import { GLTFLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/DRACOLoader.js";
 
 const STORAGE_KEY = "simple_clicker_save_v1";
 
@@ -115,9 +116,14 @@ function setupModel(model) {
 
   model.position.sub(center);
 
-  const maxAxis = Math.max(size.x, size.y, size.z) || 1;
-  roseBaseScale = 1 / maxAxis;
-  model.scale.setScalar(roseBaseScale * 1.5);
+  const distanceToModel = camera.position.distanceTo(new THREE.Vector3(0, 0, 0));
+  const fovRadians = THREE.MathUtils.degToRad(camera.fov);
+  const visibleHeight = 2 * Math.tan(fovRadians / 2) * distanceToModel;
+  const visibleWidth = visibleHeight * camera.aspect;
+  const fitHeightScale = (visibleHeight * 0.7) / (size.y || 1);
+  const fitWidthScale = (visibleWidth * 0.7) / (size.x || 1);
+  roseBaseScale = Math.min(fitHeightScale, fitWidthScale);
+  model.scale.setScalar(roseBaseScale);
 
   roseRoot = model;
   scene.add(roseRoot);
@@ -125,13 +131,18 @@ function setupModel(model) {
 
 function loadModel() {
   const loader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+  loader.setDRACOLoader(dracoLoader);
+
   loader.load(
     "./assets/models/rose.glb",
     (gltf) => {
       setupModel(gltf.scene);
     },
     undefined,
-    () => {
+    (error) => {
+      console.error("GLTFLoader error while loading ./assets/models/rose.glb", error);
       showMessage("Failed to load rose model.");
     }
   );
@@ -169,10 +180,10 @@ function animate() {
       bounceTimeLeft = Math.max(0, bounceTimeLeft - dt);
       const progress = 1 - bounceTimeLeft / 0.28;
       const pulse = Math.sin(progress * Math.PI);
-      const scale = roseBaseScale * 1.5 * (1 + pulse * 0.24);
+      const scale = roseBaseScale * (1 + pulse * 0.24);
       roseRoot.scale.setScalar(scale);
     } else {
-      roseRoot.scale.setScalar(roseBaseScale * 1.5);
+      roseRoot.scale.setScalar(roseBaseScale);
     }
   }
 
