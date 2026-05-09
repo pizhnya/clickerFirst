@@ -9,6 +9,7 @@ const state = {
   clickPower: 1,
   upgradeLevel: 0,
   upgradePrice: 10,
+  successfulClicks: 0,
 };
 
 const scoreEl = document.getElementById("score");
@@ -18,6 +19,7 @@ const upgradePriceEl = document.getElementById("upgradePrice");
 const messageEl = document.getElementById("message");
 const upgradeBtn = document.getElementById("upgradeBtn");
 const sceneContainer = document.getElementById("sceneContainer");
+const flashOverlayEl = document.getElementById("flashOverlay");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#eef4ff");
@@ -46,6 +48,7 @@ const clock = new THREE.Clock();
 
 let roseRoot = null;
 let roseBaseScale = 1;
+const BOUNCE_DURATION = 0.25;
 let bounceTimeLeft = 0;
 
 function saveGame() {
@@ -62,6 +65,7 @@ function loadGame() {
     state.clickPower = Number(saved.clickPower) || 1;
     state.upgradeLevel = Number(saved.upgradeLevel) || 0;
     state.upgradePrice = Number(saved.upgradePrice) || 10;
+    state.successfulClicks = Number(saved.successfulClicks) || 0;
   } catch {
     // ignore bad save data
   }
@@ -149,7 +153,13 @@ function loadModel() {
 }
 
 function triggerBounce() {
-  bounceTimeLeft = 0.28;
+  bounceTimeLeft = BOUNCE_DURATION;
+}
+
+function triggerFlash() {
+  flashOverlayEl.classList.remove("active");
+  void flashOverlayEl.offsetWidth;
+  flashOverlayEl.classList.add("active");
 }
 
 function onSceneClick(event) {
@@ -164,6 +174,11 @@ function onSceneClick(event) {
   if (hits.length > 0) {
     triggerBounce();
     addScore();
+    state.successfulClicks += 1;
+    if (state.successfulClicks % 10 === 0) {
+      triggerFlash();
+    }
+    saveGame();
   }
 }
 
@@ -178,12 +193,15 @@ function animate() {
 
     if (bounceTimeLeft > 0) {
       bounceTimeLeft = Math.max(0, bounceTimeLeft - dt);
-      const progress = 1 - bounceTimeLeft / 0.28;
-      const pulse = Math.sin(progress * Math.PI);
-      const scale = roseBaseScale * (1 + pulse * 0.24);
+      const progress = 1 - bounceTimeLeft / BOUNCE_DURATION;
+      const scalePulse = progress < 0.36 ? progress / 0.36 : 1 - (progress - 0.36) / 0.64;
+      const scale = roseBaseScale * (1 + Math.max(0, scalePulse) * 0.22);
+      const shake = Math.sin(progress * Math.PI * 8) * (1 - progress) * 0.14;
       roseRoot.scale.setScalar(scale);
+      roseRoot.rotation.z = shake;
     } else {
       roseRoot.scale.setScalar(roseBaseScale);
+      roseRoot.rotation.z = 0;
     }
   }
 
