@@ -10,7 +10,7 @@ body {
 }
 
 .game {
-  max-width: 420px;
+  max-width: 520px;
   margin: 40px auto;
   padding: 20px;
   background: #fff;
@@ -24,7 +24,27 @@ body {
   margin: 10px 0 20px;
 }
 
-.big-button,
+.scene {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #dbe4f5;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene-hint {
+  margin: 8px 0 18px;
+  color: #334155;
+}
+
 #upgradeBtn {
   width: 100%;
   border: 0;
@@ -32,15 +52,6 @@ body {
   padding: 14px;
   font-size: 1rem;
   cursor: pointer;
-}
-
-.big-button {
-  background: #3b82f6;
-  color: #fff;
-  margin-bottom: 18px;
-}
-
-#upgradeBtn {
   background: #16a34a;
   color: #fff;
 }
