@@ -1,38 +1,37 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Clicker</title>
+    <title>Iso Clicker Runner</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="game">
-      <p class="version">Version: <span id="versionLabel"></span></p>
-      <h1>Simple Clicker</h1>
-      <p class="score">Score: <span id="score">0</span></p>
-
-      <div id="sceneContainer" class="scene" aria-label="3D clickable rose">
-        <div id="flashOverlay" class="flash-overlay" aria-hidden="true"></div>
+    <div class="hud">
+      <h1>Iso Clicker Runner</h1>
+      <div class="stats">
+        <span>Zone: <b id="zone">1</b></span>
+        <span>Stage: <b id="stage">1/10</b></span>
+        <span>Enemy: <b id="enemyName">-</b></span>
+        <span>HP: <b id="enemyHp">0 / 0</b></span>
+        <span>Gold: <b id="gold">0</b></span>
+        <span>DPS: <b id="dps">0</b></span>
+        <span>Click DMG: <b id="clickDamage">1</b></span>
+        <span>Crit: <b id="critInfo">10% x2</b></span>
       </div>
-      <p class="scene-hint">Click the rose to gain +<span id="clickPower">1</span></p>
-
-      <section class="bounce-control">
-        <h2>Bounce Power</h2>
-        <label for="bounceSlider">Intensity: <span id="bounceValue">1</span></label>
-        <input id="bounceSlider" type="range" min="0" max="3" step="1" value="0" />
-      </section>
-
-      <section class="upgrade">
-        <h2>Upgrade</h2>
-        <p>Level: <span id="upgradeLevel">0</span></p>
-        <p>Price: <span id="upgradePrice">10</span></p>
-        <button id="upgradeBtn">Buy Upgrade (+1 click power)</button>
-      </section>
-
-      <p id="message" class="message"></p>
-    </main>
-
+      <div class="controls">
+        <button id="upgradeBtn">Upgrade Click (+1) Cost: <span id="upgradeCost">25</span></button>
+        <button id="idleBtn">Upgrade Idle (+1/s) Cost: <span id="idleCost">40</span></button>
+      </div>
+      <div class="enemy-bar-wrap">
+        <div id="enemyBar" class="enemy-bar"></div>
+      </div>
+      <p id="stateText">Бег...</p>
+      <p id="feed" class="feed"></p>
+    </div>
+    <div id="scene"></div>
+    <div id="fxLayer" class="fx-layer"></div>
+    <div id="hitFlash" class="hit-flash"></div>
     <script type="module" src="script.js"></script>
   </body>
 </html>
