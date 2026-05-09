@@ -11,7 +11,8 @@
       <h1>Simple Clicker</h1>
       <p class="score">Score: <span id="score">0</span></p>
 
-      <button id="clickBtn" class="big-button">Click +<span id="clickPower">1</span></button>
+      <div id="sceneContainer" class="scene" aria-label="3D clickable rose"></div>
+      <p class="scene-hint">Click the rose to gain +<span id="clickPower">1</span></p>
 
       <section class="upgrade">
         <h2>Upgrade</h2>
@@ -23,6 +24,6 @@
       <p id="message" class="message"></p>
     </main>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
