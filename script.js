@@ -3,6 +3,8 @@ import { GLTFLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/GL
 import { DRACOLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/DRACOLoader.js";
 
 const STORAGE_KEY = "simple_clicker_save_v1";
+const APP_VERSION = "1.2";
+const BOUNCE_OPTIONS = [1, 100, 1000, 10000];
 
 const state = {
   score: 0,
@@ -10,6 +12,7 @@ const state = {
   upgradeLevel: 0,
   upgradePrice: 10,
   successfulClicks: 0,
+  bounceMultiplier: 1,
 };
 
 const scoreEl = document.getElementById("score");
@@ -20,6 +23,9 @@ const messageEl = document.getElementById("message");
 const upgradeBtn = document.getElementById("upgradeBtn");
 const sceneContainer = document.getElementById("sceneContainer");
 const flashOverlayEl = document.getElementById("flashOverlay");
+const bounceSliderEl = document.getElementById("bounceSlider");
+const bounceValueEl = document.getElementById("bounceValue");
+const versionLabelEl = document.getElementById("versionLabel");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#eef4ff");
@@ -66,6 +72,9 @@ function loadGame() {
     state.upgradeLevel = Number(saved.upgradeLevel) || 0;
     state.upgradePrice = Number(saved.upgradePrice) || 10;
     state.successfulClicks = Number(saved.successfulClicks) || 0;
+    state.bounceMultiplier = BOUNCE_OPTIONS.includes(Number(saved.bounceMultiplier))
+      ? Number(saved.bounceMultiplier)
+      : 1;
   } catch {
     // ignore bad save data
   }
@@ -81,6 +90,15 @@ function renderUi() {
   upgradeLevelEl.textContent = state.upgradeLevel;
   upgradePriceEl.textContent = state.upgradePrice;
   upgradeBtn.disabled = state.score < state.upgradePrice;
+  bounceValueEl.textContent = state.bounceMultiplier;
+  bounceSliderEl.value = String(BOUNCE_OPTIONS.indexOf(state.bounceMultiplier));
+}
+
+function updateBounceFromSlider() {
+  const selectedIndex = Number(bounceSliderEl.value);
+  state.bounceMultiplier = BOUNCE_OPTIONS[selectedIndex] ?? 1;
+  renderUi();
+  saveGame();
 }
 
 function addScore() {
@@ -195,8 +213,9 @@ function animate() {
       bounceTimeLeft = Math.max(0, bounceTimeLeft - dt);
       const progress = 1 - bounceTimeLeft / BOUNCE_DURATION;
       const scalePulse = progress < 0.36 ? progress / 0.36 : 1 - (progress - 0.36) / 0.64;
-      const scale = roseBaseScale * (1 + Math.max(0, scalePulse) * 0.22);
-      const shake = Math.sin(progress * Math.PI * 8) * (1 - progress) * 0.14;
+      const bounceStrength = Math.log10(state.bounceMultiplier) + 1;
+      const scale = roseBaseScale * (1 + Math.max(0, scalePulse) * 0.22 * bounceStrength);
+      const shake = Math.sin(progress * Math.PI * 8) * (1 - progress) * 0.14 * bounceStrength;
       roseRoot.scale.setScalar(scale);
       roseRoot.rotation.z = shake;
     } else {
@@ -209,10 +228,12 @@ function animate() {
 }
 
 upgradeBtn.addEventListener("click", buyUpgrade);
+bounceSliderEl.addEventListener("input", updateBounceFromSlider);
 renderer.domElement.addEventListener("pointerdown", onSceneClick);
 window.addEventListener("resize", resizeRenderer);
 
 loadGame();
+versionLabelEl.textContent = APP_VERSION;
 renderUi();
 resizeRenderer();
 loadModel();

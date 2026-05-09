@@ -8,6 +8,7 @@
   </head>
   <body>
     <main class="game">
+      <p class="version">Version: <span id="versionLabel"></span></p>
       <h1>Simple Clicker</h1>
       <p class="score">Score: <span id="score">0</span></p>
 
@@ -15,6 +16,12 @@
         <div id="flashOverlay" class="flash-overlay" aria-hidden="true"></div>
       </div>
       <p class="scene-hint">Click the rose to gain +<span id="clickPower">1</span></p>
+
+      <section class="bounce-control">
+        <h2>Bounce Power</h2>
+        <label for="bounceSlider">Intensity: <span id="bounceValue">1</span></label>
+        <input id="bounceSlider" type="range" min="0" max="3" step="1" value="0" />
+      </section>
 
       <section class="upgrade">
         <h2>Upgrade</h2>
