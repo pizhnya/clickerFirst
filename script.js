@@ -3,7 +3,7 @@ import { GLTFLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/GL
 import { DRACOLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/DRACOLoader.js";
 
 const STORAGE_KEY = "simple_clicker_save_v1";
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.3";
 const BOUNCE_OPTIONS = [1, 100, 1000, 10000];
 
 const state = {
@@ -54,8 +54,23 @@ const clock = new THREE.Clock();
 
 let roseRoot = null;
 let roseBaseScale = 1;
-const BOUNCE_DURATION = 0.25;
+const BOUNCE_DURATION = 0.35;
 let bounceTimeLeft = 0;
+
+function getBounceStrength(multiplier) {
+  switch (multiplier) {
+    case 1:
+      return 1;
+    case 100:
+      return 2.5;
+    case 1000:
+      return 4.5;
+    case 10000:
+      return 7;
+    default:
+      return 1;
+  }
+}
 
 function saveGame() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -212,14 +227,20 @@ function animate() {
     if (bounceTimeLeft > 0) {
       bounceTimeLeft = Math.max(0, bounceTimeLeft - dt);
       const progress = 1 - bounceTimeLeft / BOUNCE_DURATION;
-      const scalePulse = progress < 0.36 ? progress / 0.36 : 1 - (progress - 0.36) / 0.64;
-      const bounceStrength = Math.log10(state.bounceMultiplier) + 1;
-      const scale = roseBaseScale * (1 + Math.max(0, scalePulse) * 0.22 * bounceStrength);
-      const shake = Math.sin(progress * Math.PI * 8) * (1 - progress) * 0.14 * bounceStrength;
+      const bounceStrength = getBounceStrength(state.bounceMultiplier);
+      const envelope = Math.pow(1 - progress, 1.2);
+      const stretch = Math.sin(progress * Math.PI * 1.1);
+      const scale = roseBaseScale * (1 + Math.max(0, stretch) * 0.1 * bounceStrength);
+      const shakeX = Math.sin(progress * Math.PI * 28) * 0.018 * bounceStrength * envelope;
+      const shakeY = Math.cos(progress * Math.PI * 20) * 0.012 * bounceStrength * envelope;
+      const roll = Math.sin(progress * Math.PI * 24) * 0.08 * bounceStrength * envelope;
+
       roseRoot.scale.setScalar(scale);
-      roseRoot.rotation.z = shake;
+      roseRoot.position.set(shakeX, shakeY, 0);
+      roseRoot.rotation.z = roll;
     } else {
       roseRoot.scale.setScalar(roseBaseScale);
+      roseRoot.position.set(0, 0, 0);
       roseRoot.rotation.z = 0;
     }
   }
