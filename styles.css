@@ -25,6 +25,7 @@ body {
 }
 
 .scene {
+  position: relative;
   width: 100%;
   height: 320px;
   border-radius: 12px;
@@ -32,6 +33,30 @@ body {
   border: 1px solid #dbe4f5;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   cursor: pointer;
+}
+
+.flash-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(220, 38, 38, 0.5);
+}
+
+.flash-overlay.active {
+  animation: redFlash 180ms ease-out;
+}
+
+@keyframes redFlash {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .scene canvas {
