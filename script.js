@@ -74,12 +74,14 @@ function spawnEnemy() {
   const isBoss = state.stage === STAGES_PER_ZONE;
   enemyMesh = new THREE.Mesh(new THREE.CapsuleGeometry(isBoss ? 0.9 : 0.6, isBoss ? 1.8 : 1.2, 6, 14), new THREE.MeshStandardMaterial({ color: isBoss ? "#b91c1c" : `hsl(${(state.zone * 37) % 360} 70% 52%)` }));
   enemyMesh.position.set(0, isBoss ? 1.6 : 1.1, -1.2); scene.add(enemyMesh);
+  enemyMesh.position.set(0, isBoss ? 1.6 : 1.1, -2); scene.add(enemyMesh);
   const maxHp = hpForZone(state.zone, state.stage);
   state.enemy = { name: isBoss ? `Boss ${state.zone}` : `Mob ${state.zone}-${state.stage}`, hp: maxHp, maxHp, gold: goldForZone(state.zone, state.stage) };
   state.runState = "fighting"; ui.stateText.textContent = isBoss ? "БОСС!" : "Бой!"; syncUi();
 }
 const nextStage = () => { state.stage += 1; if (state.stage > STAGES_PER_ZONE) { state.zone += 1; state.stage = 1; } };
 function killEnemy() { state.gold += state.enemy.gold; feed(`+${state.enemy.gold} gold`); shakeTime = 0.42; shakePower = 0.75; zoomTime = 0.28; for (let i = 0; i < 45; i++) spawnParticle(true); traveledSinceKill = 0; nextEncounterDistance = 12 + Math.random() * 10; state.enemy = null; state.runState = "running"; ui.stateText.textContent = "Бег..."; nextStage(); if (enemyMesh) scene.remove(enemyMesh); enemyMesh = null; save(); syncUi(); }
+function killEnemy() { state.gold += state.enemy.gold; feed(`+${state.enemy.gold} gold`); shakeTime = 0.25; shakePower = 0.3; zoomTime = 0.22; for (let i = 0; i < 16; i++) spawnParticle(true); state.enemy = null; state.runState = "running"; ui.stateText.textContent = "Бег..."; nextStage(); if (enemyMesh) scene.remove(enemyMesh); enemyMesh = null; save(); syncUi(); }
 
 ui.upgradeBtn.addEventListener("click", () => { if (state.gold < state.upgradeCost) return; state.gold -= state.upgradeCost; state.clickDamage += 1; state.upgradeCost = Math.ceil(state.upgradeCost * 1.6); save(); syncUi(); });
 ui.idleBtn.addEventListener("click", () => { if (state.gold < state.idleCost) return; state.gold -= state.idleCost; state.idleDps += 1; state.idleCost = Math.ceil(state.idleCost * 1.7); save(); syncUi(); });
@@ -96,6 +98,8 @@ function spawnParticle(big = false) {
   p.position.copy(origin).add(new THREE.Vector3((Math.random() - 0.5) * 1.8, (Math.random() - 0.25) * 1.4, (Math.random() - 0.5) * 1.8));
   p.userData.vel = new THREE.Vector3((Math.random() - 0.5) * (big ? 10 : 8), Math.random() * (big ? 7 : 5), (Math.random() - 0.5) * (big ? 10 : 8));
   p.userData.life = big ? 1.1 : 0.65;
+  const p = new THREE.Mesh(new THREE.SphereGeometry(big ? 0.12 : 0.07, 8, 8), new THREE.MeshStandardMaterial({ color: big ? "#ffd166" : "#ffffff", emissive: big ? "#c69200" : "#1f2937" }));
+  p.position.copy(enemyMesh?.position || new THREE.Vector3(0, 1, -2)); p.userData.vel = new THREE.Vector3((Math.random() - 0.5) * 5, Math.random() * 4, (Math.random() - 0.5) * 5); p.userData.life = big ? 0.8 : 0.45;
   particles.push(p); scene.add(p);
 }
 
@@ -106,6 +110,7 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
   const isCrit = Math.random() < state.critChance; const dmg = state.clickDamage * (isCrit ? state.critMultiplier : 1);
   state.enemy.hp = Math.max(0, state.enemy.hp - dmg); enemyMesh.scale.setScalar(0.95 + Math.random() * 0.1); enemyMesh.rotation.y += 0.25; feed(`${isCrit ? "CRIT " : ""}-${dmg} HP`);
   shakeTime = isCrit ? 0.24 : 0.14; shakePower = isCrit ? 0.55 : 0.32; hitStop = isCrit ? 0.09 : 0.045; flashHit(); spawnPopup(`-${dmg}`, isCrit, event); for (let i = 0; i < (isCrit ? 24 : 14); i++) spawnParticle(false);
+  shakeTime = isCrit ? 0.15 : 0.08; shakePower = isCrit ? 0.22 : 0.1; hitStop = isCrit ? 0.07 : 0.035; flashHit(); spawnPopup(`-${dmg}`, isCrit, event); for (let i = 0; i < (isCrit ? 9 : 5); i++) spawnParticle(false);
   if (state.enemy.hp === 0) killEnemy(); else syncUi();
 });
 
@@ -121,6 +126,9 @@ function animate(now) {
   if (state.runState === "running") { hero.position.z += 7 * dt; hero.position.y = Math.sin(t * 15) * 0.06; hero.rotation.z = Math.sin(t * 14) * 0.04; traveledSinceKill += 7 * dt; if (traveledSinceKill >= nextEncounterDistance) spawnEnemy(); }
   else { hero.position.z += (-7 - hero.position.z) * 0.08; hero.position.y = 0; hero.rotation.z = 0; if (state.enemy) { state.enemy.hp = Math.max(0, state.enemy.hp - state.idleDps * dt); if (state.enemy.hp === 0) killEnemy(); else syncUi(); } }
   if (state.runState === "running" && hero.position.z > 40) hero.position.z = -24;
+  if (state.runState === "running") { hero.position.z += 7 * dt; hero.position.y = Math.sin(t * 15) * 0.06; hero.rotation.z = Math.sin(t * 14) * 0.04; if (hero.position.z >= -4) spawnEnemy(); }
+  else { hero.position.z += (-7 - hero.position.z) * 0.08; hero.position.y = 0; hero.rotation.z = 0; if (state.enemy) { state.enemy.hp = Math.max(0, state.enemy.hp - state.idleDps * dt); if (state.enemy.hp === 0) killEnemy(); else syncUi(); } }
+  if (state.runState === "running" && hero.position.z > 24) hero.position.z = -24;
   for (let i = particles.length - 1; i >= 0; i--) { const p = particles[i]; p.userData.life -= dt; p.position.addScaledVector(p.userData.vel, dt); p.userData.vel.y -= 6 * dt; p.scale.multiplyScalar(0.985); if (p.userData.life <= 0) { scene.remove(p); particles.splice(i, 1); } }
   let zoomOffset = 0; if (zoomTime > 0) { zoomTime -= dt; zoomOffset = Math.sin((zoomTime / 0.22) * Math.PI) * 1.4; }
   if (shakeTime > 0) { shakeTime -= dt; camera.position.set(baseCamPos.x + (Math.random() - 0.5) * shakePower, baseCamPos.y + (Math.random() - 0.5) * shakePower, baseCamPos.z - zoomOffset + (Math.random() - 0.5) * shakePower); } else camera.position.lerp(new THREE.Vector3(baseCamPos.x, baseCamPos.y, baseCamPos.z - zoomOffset), 0.18);
