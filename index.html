@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Clicker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game">
+      <h1>Simple Clicker</h1>
+      <p class="score">Score: <span id="score">0</span></p>
+
+      <button id="clickBtn" class="big-button">Click +<span id="clickPower">1</span></button>
+
+      <section class="upgrade">
+        <h2>Upgrade</h2>
+        <p>Level: <span id="upgradeLevel">0</span></p>
+        <p>Price: <span id="upgradePrice">10</span></p>
+        <button id="upgradeBtn">Buy Upgrade (+1 click power)</button>
+      </section>
+
+      <p id="message" class="message"></p>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

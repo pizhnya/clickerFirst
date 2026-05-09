@@ -1,0 +1,65 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #222;
+}
+
+.game {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.score {
+  font-size: 1.4rem;
+  margin: 10px 0 20px;
+}
+
+.big-button,
+#upgradeBtn {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.big-button {
+  background: #3b82f6;
+  color: #fff;
+  margin-bottom: 18px;
+}
+
+#upgradeBtn {
+  background: #16a34a;
+  color: #fff;
+}
+
+#upgradeBtn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.upgrade {
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.message {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #b91c1c;
+}
