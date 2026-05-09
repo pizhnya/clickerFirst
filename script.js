@@ -1,5 +1,5 @@
-import * as THREE from "https://unpkg.com/three@0.166.1/build/three.module.js";
-import { GLTFLoader } from "https://unpkg.com/three@0.166.1/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "https://esm.sh/three@0.166.1";
+import { GLTFLoader } from "https://esm.sh/three@0.166.1/examples/jsm/loaders/GLTFLoader.js";
 
 const STORAGE_KEY = "simple_clicker_save_v1";
 
@@ -126,7 +126,7 @@ function setupModel(model) {
 function loadModel() {
   const loader = new GLTFLoader();
   loader.load(
-    "assets/models/rose.glb",
+    "./assets/models/rose.glb",
     (gltf) => {
       setupModel(gltf.scene);
     },
