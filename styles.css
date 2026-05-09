@@ -19,6 +19,13 @@ body {
   text-align: center;
 }
 
+.version {
+  margin: 0 0 8px;
+  text-align: right;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 .score {
   font-size: 1.4rem;
   margin: 10px 0 20px;
@@ -92,6 +99,20 @@ body {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 14px;
+}
+
+.bounce-control {
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+#bounceSlider {
+  width: 100%;
+  margin-top: 10px;
 }
 
 .message {
