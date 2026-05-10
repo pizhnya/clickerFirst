@@ -3,32 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Iso Clicker Runner</title>
+    <title>Epoch Clicker Prototype</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="hud">
-      <h1>Iso Clicker Runner</h1>
+      <h1>Epoch Clicker Prototype</h1>
       <div class="stats">
         <span>Zone: <b id="zone">1</b></span>
         <span>Stage: <b id="stage">1/10</b></span>
         <span>Enemy: <b id="enemyName">-</b></span>
         <span>HP: <b id="enemyHp">0 / 0</b></span>
         <span>Gold: <b id="gold">0</b></span>
+        <span>Essence: <b id="essence">0</b></span>
         <span>DPS: <b id="dps">0</b></span>
         <span>Click DMG: <b id="clickDamage">1</b></span>
         <span>Crit: <b id="critInfo">10% x2</b></span>
+        <span>Offline: <b id="offlineInfo">0s</b></span>
       </div>
+
       <div class="controls">
         <button id="upgradeBtn">Upgrade Click (+1) Cost: <span id="upgradeCost">25</span></button>
         <button id="idleBtn">Upgrade Idle (+1/s) Cost: <span id="idleCost">40</span></button>
+        <button id="ascendBtn">Ascend (Stage 50+)</button>
       </div>
+
+      <div class="controls meta">
+        <button id="metaDamageBtn">Meta Damage +10% Cost: <span id="metaDamageCost">1</span> Essence</button>
+        <button id="metaGoldBtn">Meta Gold +10% Cost: <span id="metaGoldCost">1</span> Essence</button>
+      </div>
+
       <div class="enemy-bar-wrap">
         <div id="enemyBar" class="enemy-bar"></div>
       </div>
+
       <p id="stateText">Бег...</p>
       <p id="feed" class="feed"></p>
     </div>
+
     <div id="scene"></div>
     <div id="fxLayer" class="fx-layer"></div>
     <div id="hitFlash" class="hit-flash"></div>

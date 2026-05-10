@@ -1,10 +1,11 @@
 * { box-sizing: border-box; }
 body { margin: 0; font-family: Inter, Arial, sans-serif; background: #08121d; color: #e8f0ff; }
 #scene { width: 100vw; height: 100vh; }
-.hud { position: fixed; top: 12px; left: 12px; z-index: 2; width: min(620px, calc(100vw - 24px)); background: rgba(8,18,29,.84); border: 1px solid #2d425d; border-radius: 12px; padding: 12px 14px; }
+.hud { position: fixed; top: 12px; left: 12px; z-index: 2; width: min(760px, calc(100vw - 24px)); background: rgba(8,18,29,.84); border: 1px solid #2d425d; border-radius: 12px; padding: 12px 14px; }
 h1 { margin: 0 0 10px; font-size: 1.2rem; }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(100px, 1fr)); gap: 6px; font-size: .9rem; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(100px, 1fr)); gap: 6px; font-size: .9rem; }
 .controls { margin-top: 10px; display:flex; gap:10px; flex-wrap: wrap; }
+.controls.meta button { background: #8b5cf6; }
 button { border:0; border-radius:10px; padding:10px 12px; background:#2f7fff; color:#fff; font-weight:700; cursor:pointer; }
 button:disabled { background:#5c6777; cursor:not-allowed; }
 #stateText { margin: 10px 0 0; font-weight: 700; }
