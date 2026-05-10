@@ -216,6 +216,8 @@ function syncUi() {
   const enemyVisible = state.runState === "fighting" && state.enemy;
   ui.enemyName.textContent = enemyVisible ? state.enemy.name : "-";
   ui.enemyHp.textContent = enemyVisible ? `${Math.ceil(state.enemy.hp)} / ${state.enemy.maxHp}` : "0 / 0";
+  ui.enemyName.textContent = state.enemy?.name ?? "-";
+  ui.enemyHp.textContent = state.enemy ? `${Math.ceil(state.enemy.hp)} / ${state.enemy.maxHp}` : "0 / 0";
   ui.gold.textContent = Math.floor(state.gold);
   ui.essence.textContent = state.essence;
   ui.dps.textContent = state.idleDps;
@@ -232,6 +234,7 @@ function syncUi() {
   ui.ascendBtn.disabled = state.highestStageEver < 50;
 
   const pct = enemyVisible ? (state.enemy.hp / state.enemy.maxHp) * 100 : 0;
+  const pct = state.enemy ? (state.enemy.hp / state.enemy.maxHp) * 100 : 0;
   ui.enemyBar.style.width = `${Math.max(0, pct)}%`;
 }
 
