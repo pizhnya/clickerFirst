@@ -202,6 +202,9 @@ function load() {
   try {
     const parsed = JSON.parse(localStorage.getItem(SAVE_KEY) || "{}");
     Object.assign(state, defaultState, parsed);
+    // Runtime entities are recreated on boot; stale serialized combat state can desync HUD/scene.
+    state.enemy = null;
+    state.runState = "running";
   } catch {
     Object.assign(state, defaultState);
   }
@@ -210,6 +213,9 @@ function load() {
 function syncUi() {
   ui.zone.textContent = state.zone;
   ui.stage.textContent = `${state.stage}/${STAGES_PER_ZONE}`;
+  const enemyVisible = state.runState === "fighting" && state.enemy;
+  ui.enemyName.textContent = enemyVisible ? state.enemy.name : "-";
+  ui.enemyHp.textContent = enemyVisible ? `${Math.ceil(state.enemy.hp)} / ${state.enemy.maxHp}` : "0 / 0";
   ui.enemyName.textContent = state.enemy?.name ?? "-";
   ui.enemyHp.textContent = state.enemy ? `${Math.ceil(state.enemy.hp)} / ${state.enemy.maxHp}` : "0 / 0";
   ui.gold.textContent = Math.floor(state.gold);
@@ -227,6 +233,7 @@ function syncUi() {
   ui.metaGoldBtn.disabled = state.essence < state.metaGoldCost;
   ui.ascendBtn.disabled = state.highestStageEver < 50;
 
+  const pct = enemyVisible ? (state.enemy.hp / state.enemy.maxHp) * 100 : 0;
   const pct = state.enemy ? (state.enemy.hp / state.enemy.maxHp) * 100 : 0;
   ui.enemyBar.style.width = `${Math.max(0, pct)}%`;
 }
@@ -431,6 +438,7 @@ window.addEventListener("resize", resize);
 
 load();
 applyOfflineProgress();
+ui.stateText.textContent = "Бег...";
 
 let t = 0;
 let last = performance.now();
